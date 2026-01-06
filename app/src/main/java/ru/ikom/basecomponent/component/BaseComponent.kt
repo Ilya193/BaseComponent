@@ -18,7 +18,7 @@ abstract class BaseComponent<State : Any, Msg : Any, Label: Any>(
 
     protected val uiState = MutableStateFlow(initialState)
 
-    private val scope = CoroutineScope(dispatcher)
+    protected val coroutineScope = CoroutineScope(dispatcher)
 
     val states = uiState.asStateFlow()
 
@@ -41,6 +41,6 @@ abstract class BaseComponent<State : Any, Msg : Any, Label: Any>(
 
     @CallSuper
     override fun dispose() {
-        scope.cancel()
+        coroutineScope.cancel()
     }
 }
