@@ -1,11 +1,21 @@
 package ru.ikom.basecomponent.example
 
 import ru.ikom.basecomponent.component.BaseRootComponent
+import ru.ikom.basecomponent.component.Reducer
 
-class MainComponent : BaseRootComponent<MainComponent.State,
-        MainComponent.Msg, MainComponent.Label>(initialState()) {
+class MainComponentReducer : Reducer<MainComponent.State, MainComponent.Msg> {
+    override fun MainComponent.State.reduce(msg: MainComponent.Msg): MainComponent.State =
+        when (msg) {
+            is MainComponent.Msg.UpdateLoading -> copy(isLoading = msg.isLoading)
+        }
+}
 
-    val nestedComponent = NestedComponent()
+class MainComponent(
+    reducer: Reducer<State, Msg> = MainComponentReducer(),
+) : BaseRootComponent<MainComponent.State, MainComponent.Msg,
+        MainComponent.Label>(initialState(), reducer) {
+
+    val nestedComponent = NestedComponent() // DI
 
     init {
         internalInitNestedComponents()
@@ -16,11 +26,6 @@ class MainComponent : BaseRootComponent<MainComponent.State,
     private fun internalInitNestedComponents() {
         initNestedComponents(nestedComponent)
     }
-
-    override fun State.reduce(msg: Msg): State =
-        when (msg) {
-            is Msg.UpdateLoading -> copy(isLoading = msg.isLoading)
-        }
 
     data class State(
         val isLoading: Boolean

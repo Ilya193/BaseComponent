@@ -13,8 +13,9 @@ import kotlinx.coroutines.flow.update
 
 abstract class BaseComponent<State : Any, Msg : Any, Label: Any>(
     initialState: State,
+    private val reducer: Reducer<State, Msg>,
     dispatcher: CoroutineDispatcher = Dispatchers.Main.immediate
-) : DisposableComponent {
+) : DisposableComponent, Reducer<State, Msg> by reducer {
 
     protected val uiState = MutableStateFlow(initialState)
 
@@ -36,8 +37,6 @@ abstract class BaseComponent<State : Any, Msg : Any, Label: Any>(
     protected fun publish(label: Label) {
         _labels.trySend(label)
     }
-
-    protected abstract fun State.reduce(msg: Msg): State
 
     @CallSuper
     override fun dispose() {

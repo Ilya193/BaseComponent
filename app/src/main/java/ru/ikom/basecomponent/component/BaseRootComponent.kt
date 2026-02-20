@@ -7,7 +7,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 
-abstract class BaseRootComponent<State : Any, Msg : Any, Label: Any>(initialState: State) : ViewModel() {
+abstract class BaseRootComponent<State : Any, Msg : Any, Label: Any>(
+    initialState: State,
+    protected val reducer: Reducer<State, Msg>
+) : ViewModel(), Reducer<State, Msg> by reducer {
 
     private val components = mutableListOf<DisposableComponent>()
 
@@ -33,8 +36,6 @@ abstract class BaseRootComponent<State : Any, Msg : Any, Label: Any>(initialStat
     protected fun publish(label: Label) {
         _labels.trySend(label)
     }
-
-    protected abstract fun State.reduce(msg: Msg): State
 
     override fun onCleared() {
         super.onCleared()
